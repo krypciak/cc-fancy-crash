@@ -1,6 +1,6 @@
 {
     "name": "cc-fancy-crash",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Better crash message",
     "scripts": {
         "start": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --outfile=plugin.js src/plugin.ts",
