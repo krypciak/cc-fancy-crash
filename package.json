@@ -1,0 +1,20 @@
+{
+    "name": "cc-fancy-crash",
+    "version": "1.0.0",
+    "description": "Better crash message",
+    "scripts": {
+        "start": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --outfile=plugin.js src/plugin.ts",
+        "watch": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --watch --outfile=plugin.js src/plugin.ts",
+        "build": "esbuild --target=es2018 --format=esm --platform=node --bundle --outfile='plugin.js' 'src/plugin.ts'"
+    },
+    "author": "krypek",
+    "license": "GPLv3",
+    "devDependencies": {
+        "@types/node": "^20.4.4",
+        "@typescript-eslint/eslint-plugin": "^6.2.0",
+        "@typescript-eslint/parser": "^6.2.0",
+        "esbuild": "^0.18.15",
+        "typescript": "^5.2.2",
+        "ultimate-crosscode-typedefs": "github:krypciak/ultimate-crosscode-typedefs"
+    }
+}

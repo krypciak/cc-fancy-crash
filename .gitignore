@@ -1,0 +1,11 @@
+package-lock.json
+old
+old.txt
+plugin.js
+*.ccmod
+*.zip
+*.kra~
+*.png~
+dist/prettier/*
+node_modules
+js
