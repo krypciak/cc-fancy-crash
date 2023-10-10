@@ -7,6 +7,7 @@ declare global {
     namespace ig {
         interface System {
             crashed: boolean
+            run(): void
         }
         interface SoundManager {
             getSampleRate(this: this): number
@@ -151,6 +152,9 @@ export default class FancyCrashMessage {
                         (error, gci as GameCrashInfo, gameInfo as InGameCrashInfo).then(res => {
                             if (res.doCrash) {
                                 window.crashMsg[res.index!].dom.hide()
+                                console.log('running')
+                                this.crashed = false
+                                ig.system.run()
                             } else {
                                 throw error
                             }
