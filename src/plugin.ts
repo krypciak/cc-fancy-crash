@@ -72,6 +72,7 @@ const optionsHeader: string = 'crashmsg'
 const checkboxReload: string = `${optionsHeader}-reload`
 const checkboxTheme: string = `${optionsHeader}-theme`
 const checkboxExplosion: string = `${optionsHeader}-explosion`
+const checkboxNoCatch: string = `${optionsHeader}-nocatch`
 let isCCL3: boolean
 
 export default class FancyCrashMessage {
@@ -97,6 +98,10 @@ export default class FancyCrashMessage {
             name: 'Explosion',
             description: 'Explosion',
         }
+        ig.lang.labels.sc.gui.options[checkboxNoCatch] = {
+            name: `Don't catch errors`,
+            description: 'Disables the Ignore error button, helps with debugging',
+        }
     }
 
     async prestart() {
@@ -118,6 +123,12 @@ export default class FancyCrashMessage {
             header: optionsHeader,
         }
         sc.OPTIONS_DEFINITION[checkboxReload] = {
+            type: 'CHECKBOX',
+            init: false,
+            cat: sc.OPTION_CATEGORY.INTERFACE,
+            header: optionsHeader,
+        }
+        sc.OPTIONS_DEFINITION[checkboxNoCatch] = {
             type: 'CHECKBOX',
             init: false,
             cat: sc.OPTION_CATEGORY.INTERFACE,
@@ -159,7 +170,8 @@ export default class FancyCrashMessage {
                                 throw error
                             }
                         })
-                } else {
+                }
+                if (! GAME_ERROR_CALLBACK || sc.options?.get(checkboxNoCatch)) {
                     throw error
                 }
             },
