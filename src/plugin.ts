@@ -104,7 +104,7 @@ export default class FancyCrashMessage {
         }
     }
 
-    async prestart() {
+    prestart() {
         sc.OPTIONS_DEFINITION[checkboxTheme] = {
             type: 'BUTTON_GROUP',
             init: Object.keys(themes).indexOf('Original'),
@@ -177,7 +177,7 @@ export default class FancyCrashMessage {
             },
         })
         
-        window.GAME_ERROR_CALLBACK = async function(err: Error, info: GameCrashInfo, gameInfo: InGameCrashInfo): Promise<{ doCrash: boolean, index?: number }> {
+        window.GAME_ERROR_CALLBACK = function(err: Error, info: GameCrashInfo, gameInfo: InGameCrashInfo): Promise<{ doCrash: boolean, index?: number }> {
             const infoText: string = `ccV: ${info.version},   cclV: ${isCCL3 ? '3' : '2'},  OS: ${info.OS},   platform: ${info.platform},   ` + 
                                      `nwjsV: ${info.nwjsVersion},   browserV: ${info.browserVersion} ${info.map ? `,   map: ${info.map}` : ''}` +
                                      `\n\n${err.stack}`
