@@ -3,6 +3,7 @@
 	"version": "1.0.6",
 	"title": "Fancy crash",
     "description": "Better crash message",
+    "homepage": "https://github.com/krypciak/cc-fancy-crash",
     "icons": {
 		"24": "icon/icon.png"
 	},
