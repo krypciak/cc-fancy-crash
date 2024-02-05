@@ -1,4 +1,4 @@
-import { Mod } from "ultimate-crosscode-typedefs/modloader/mod"
+import { Mod } from 'ultimate-crosscode-typedefs/modloader/mod'
 
 type GameCrashInfo = Parameters<typeof GAME_ERROR_CALLBACK>[1]
 type InGameCrashInfo = Parameters<typeof GAME_ERROR_CALLBACK>[2]
@@ -35,7 +35,7 @@ declare global {
     var crashMsg: {
         dom: JQuery
         copyFuncs: (() => void)[]
-        promiseResolve?: (res: { doCrash: boolean, index?: number }) => void
+        promiseResolve?: (res: { doCrash: boolean; index?: number }) => void
     }[]
 
     var activeMods: ModCCL2[]
@@ -49,10 +49,13 @@ type ModCCL2 = Mod & {
 export type Mod1 = Mod & {
     isCCModPacked: boolean
     findAllAssets?(): void /* only there for ccl2, used to set isCCL3 */
-} & ({
-    isCCL3: true
-    id: string
-} | ModCCL2)
+} & (
+        | {
+              isCCL3: true
+              id: string
+          }
+        | ModCCL2
+    )
 
 interface CrashMsgTheme {
     bg?: string
@@ -62,8 +65,8 @@ interface CrashMsgTheme {
 }
 
 const themes: Record<string, CrashMsgTheme> = {
-    Original: { },
-    Gray: { bg: '#1d1f21', fg: '#fcfcfc', bgTextField: '#303336', fgTextField: '#fcfcfc', }
+    Original: {},
+    Gray: { bg: '#1d1f21', fg: '#fcfcfc', bgTextField: '#303336', fgTextField: '#fcfcfc' },
 }
 const discordBadge: string = `https://img.shields.io/discord/382339402338402315?logo=discord&logoColor=white&label=CrossCode%20Modding`
 const discordLink: string = `https://discord.com/invite/3Xw69VjXfW`
@@ -84,10 +87,10 @@ export default class FancyCrashMessage {
     }
 
     async poststart() {
-		ig.lang.labels.sc.gui.options.headers[optionsHeader] = 'Crash Message'
+        ig.lang.labels.sc.gui.options.headers[optionsHeader] = 'Crash Message'
         ig.lang.labels.sc.gui.options[checkboxReload] = {
             name: `'Restart Game' button mode`,
-            description: 'True for location.reload(), false for chrome.runtime.reload()'
+            description: 'True for location.reload(), false for chrome.runtime.reload()',
         }
         ig.lang.labels.sc.gui.options[checkboxTheme] = {
             name: 'Theme',
@@ -108,10 +111,13 @@ export default class FancyCrashMessage {
         sc.OPTIONS_DEFINITION[checkboxTheme] = {
             type: 'BUTTON_GROUP',
             init: Object.keys(themes).indexOf('Original'),
-            data: Object.entries(themes).reduce((acc, [k, _], i) => {
-                acc[k] = i
-                return acc
-            }, {} as { [key: string]: number }),
+            data: Object.entries(themes).reduce(
+                (acc, [k, _], i) => {
+                    acc[k] = i
+                    return acc
+                },
+                {} as { [key: string]: number }
+            ),
             cat: sc.OPTION_CATEGORY.INTERFACE,
             header: optionsHeader,
             hasDivider: true,
@@ -152,50 +158,56 @@ export default class FancyCrashMessage {
                 gci.browser = ig.browser
                 gci.browserVersion = ig.browserVersion
                 gci.nwjsVersion = ig.nwjsVersion && ig.nwjsVersion[0]
-                gci["64bit"] = ig.nwjs64
+                gci['64bit'] = ig.nwjs64
                 gci.webAudio = ig.webAudioActive
                 gci.sampleRate = ig.soundManager.getSampleRate()
                 const gameInfo: Partial<InGameCrashInfo> = {}
                 ig.game && ig.game.getErrorData(gameInfo)
-            
+
                 if (GAME_ERROR_CALLBACK) {
-                    (GAME_ERROR_CALLBACK as ((error: Error, info: GameCrashInfo, gameInfo: InGameCrashInfo) => Promise<{ doCrash: boolean, index?: number }>))
-                        (error, gci as GameCrashInfo, gameInfo as InGameCrashInfo).then(res => {
-                            if (res.doCrash) {
-                                window.crashMsg[res.index!].dom.hide()
-                                console.log('running')
-                                this.crashed = false
-                                ig.system.run()
-                            } else {
-                                throw error
-                            }
-                        })
+                    ;(GAME_ERROR_CALLBACK as (error: Error, info: GameCrashInfo, gameInfo: InGameCrashInfo) => Promise<{ doCrash: boolean; index?: number }>)(
+                        error,
+                        gci as GameCrashInfo,
+                        gameInfo as InGameCrashInfo
+                    ).then(res => {
+                        if (res.doCrash) {
+                            window.crashMsg[res.index!].dom.hide()
+                            console.log('running')
+                            this.crashed = false
+                            ig.system.run()
+                        } else {
+                            throw error
+                        }
+                    })
                 }
-                if (! GAME_ERROR_CALLBACK || sc.options?.get(checkboxNoCatch)) {
+                if (!GAME_ERROR_CALLBACK || sc.options?.get(checkboxNoCatch)) {
                     throw error
                 }
             },
         })
-        
-        window.GAME_ERROR_CALLBACK = function(err: Error, info: GameCrashInfo, gameInfo: InGameCrashInfo): Promise<{ doCrash: boolean, index?: number }> {
-            const infoText: string = `ccV: ${info.version},   cclV: ${isCCL3 ? '3' : '2'},  OS: ${info.OS},   platform: ${info.platform},   ` + 
-                                     `nwjsV: ${info.nwjsVersion},   browserV: ${info.browserVersion} ${info.map ? `,   map: ${info.map}` : ''}` +
-                                     `\n\n${err.stack}`
+
+        window.GAME_ERROR_CALLBACK = function (err: Error, info: GameCrashInfo, gameInfo: InGameCrashInfo): Promise<{ doCrash: boolean; index?: number }> {
+            const infoText: string =
+                `ccV: ${info.version},   cclV: ${isCCL3 ? '3' : '2'},  OS: ${info.OS},   platform: ${info.platform},   ` +
+                `nwjsV: ${info.nwjsVersion},   browserV: ${info.browserVersion} ${info.map ? `,   map: ${info.map}` : ''}` +
+                `\n\n${err.stack}`
 
             /* [modName, modVersion] */
-            const mods: [string, string | undefined][] = isCCL3 ?
-                Array.from(window.modloader.loadedMods.values()).map(m => [m.id, m.version?.toString()])
+            const mods: [string, string | undefined][] = isCCL3
+                ? Array.from(window.modloader.loadedMods.values()).map(m => [m.id, m.version?.toString()])
                 : window.activeMods.map(m => [m.name, m.version?.toString()])
             const modListTxt: string = mods.map(m => `${m[0]}  ${m[1] ?? 'versionNull'}`).reduce((v, acc) => acc + '\n' + v)
 
             let themeOptionIndex: number | undefined = sc.options?.get(checkboxTheme) as number | undefined
             const theme: CrashMsgTheme = themeOptionIndex === undefined ? themes['Original'] : Object.values(themes)[themeOptionIndex]
-            const doExplosion: boolean = sc.options?.get(checkboxExplosion) as boolean ?? false
+            const doExplosion: boolean = (sc.options?.get(checkboxExplosion) as boolean) ?? false
             const reloadCmd: string = sc.options?.get(checkboxReload) ? 'window.location.reload()' : 'chrome.runtime.reload()'
 
             const divStyle: string = `${theme.bg ? `background-color: ${theme.bg};` : ''} ${theme.fg ? `foreground-color: ${theme.fg};` : ''}
                 top: 40%; height: 600px; margin-top: -200px; transition: all 1s;`
-            const textAreaStyle: string = `${theme.bgTextField ? `background-color: ${theme.bgTextField};` : ''} ${theme.fgTextField ? `foreground-color: ${theme.fgTextField};` : ''}`
+            const textAreaStyle: string = `${theme.bgTextField ? `background-color: ${theme.bgTextField};` : ''} ${
+                theme.fgTextField ? `foreground-color: ${theme.fgTextField};` : ''
+            }`
 
             const expDom = ig.dom.html(`
                 <div style="width: 70%; left: 10%; max-width: 100%; position: absolute; top: -35%; ">
@@ -216,28 +228,44 @@ export default class FancyCrashMessage {
                 <p class="bottom"></p>
             </div>`)
 
-            mainDom.find('#textarea1')   .click(function(this: any) { $(this).select() } )
-            mainDom.find('#textareaMods').click(function(this: any) { $(this).select() } )
+            mainDom.find('#textarea1').click(function (this: any) {
+                $(this).select()
+            })
+            mainDom.find('#textareaMods').click(function (this: any) {
+                $(this).select()
+            })
 
             window.crashMsg ??= []
-            const crashMsgIndex: number = window.crashMsg.push({
+            const crashMsgIndex: number =
+                window.crashMsg.push({
                     dom: mainDom,
-                    copyFuncs: [ infoText, modListTxt, gameInfo.save ].map(str => (() => { nw.Clipboard.get().set(str) })),
+                    copyFuncs: [infoText, modListTxt, gameInfo.save].map(str => () => {
+                        nw.Clipboard.get().set(str)
+                    }),
                 }) - 1
 
             mainDom.append(ig.dom.html(`<a href="javascript:${reloadCmd}"                                     class="bigButton" >Restart the Game</a>`))
             mainDom.append(ig.dom.html(`<a href="javascript:window.crashMsg[${crashMsgIndex}].copyFuncs[0]()" class="bigButton" >Copy crash log</a>`))
             mainDom.append(ig.dom.html(`<a href="javascript:window.crashMsg[${crashMsgIndex}].copyFuncs[1]()" class="bigButton" >Copy mod list</a>`))
             mainDom.append(ig.dom.html(`<a href="javascript:window.crashMsg[${crashMsgIndex}].copyFuncs[2]()" class="bigButton" >Copy save data</a>`))
-            mainDom.append(ig.dom.html(`<a href="javascript:window.crashMsg[${crashMsgIndex}].promiseResolve({doCrash: true, index: ${crashMsgIndex}})"   class="bigButton" >Ignore the error</a>`))
+            mainDom.append(
+                ig.dom.html(
+                    `<a href="javascript:window.crashMsg[${crashMsgIndex}].promiseResolve({doCrash: true, index: ${crashMsgIndex}})"   class="bigButton" >Ignore the error</a>`
+                )
+            )
 
             $(document.body).append(mainDom)
             doExplosion && $(document.body).append(expDom)
-            window.setTimeout(() => { mainDom.addClass('shown') }, 20)
-            const promise = new Promise<{ doCrash: boolean, index?: number }>((res) => {
+            window.setTimeout(() => {
+                mainDom.addClass('shown')
+            }, 20)
+            const promise = new Promise<{ doCrash: boolean; index?: number }>(res => {
                 window.crashMsg[crashMsgIndex].promiseResolve = res
             })
-            doExplosion && setTimeout(function () { expDom.hide() }, 1400);
+            doExplosion &&
+                setTimeout(function () {
+                    expDom.hide()
+                }, 1400)
             return promise
         }
     }

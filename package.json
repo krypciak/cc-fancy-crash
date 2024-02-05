@@ -5,16 +5,17 @@
     "scripts": {
         "start": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --outfile=plugin.js src/plugin.ts",
         "watch": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --watch --outfile=plugin.js src/plugin.ts",
-        "build": "esbuild --target=es2018 --format=esm --platform=node --bundle --outfile='plugin.js' 'src/plugin.ts'"
+        "build": "esbuild --target=es2018 --format=esm --platform=node --bundle --outfile='plugin.js' 'src/plugin.ts'",
+        "format": "prettier ./src -w"
     },
     "author": "krypek",
     "license": "GPLv3",
     "devDependencies": {
-        "@types/node": "^20.4.4",
-        "@typescript-eslint/eslint-plugin": "^6.2.0",
-        "@typescript-eslint/parser": "^6.2.0",
-        "esbuild": "^0.18.15",
-        "typescript": "^5.2.2",
+        "@types/node": "^11.6.0",
+        "@typescript-eslint/eslint-plugin": "^6.20.0",
+        "@typescript-eslint/parser": "^6.20.0",
+        "esbuild": "^0.20.0",
+        "typescript": "^5.3.3",
         "ultimate-crosscode-typedefs": "github:krypciak/ultimate-crosscode-typedefs"
     }
 }
