@@ -1,12 +1,13 @@
 {
-	"id": "cc-fancy-crash",
-	"version": "1.0.7",
-	"title": "Fancy crash",
+    "id": "cc-fancy-crash",
+    "version": "1.0.7",
+    "title": "Fancy crash",
     "description": "Better crash message",
-    "homepage": "https://github.com/krypciak/cc-fancy-crash",
+    "repository": "https://github.com/krypciak/cc-fancy-crash",
+    "tags": ["dev"],
+    "authors": "krypek",
     "icons": {
-		"24": "icon/icon.png"
-	},
-	"plugin": "plugin.js",
-	"dependencies": { }
+        "24": "icon/icon.png"
+    },
+    "plugin": "plugin.js"
 }
