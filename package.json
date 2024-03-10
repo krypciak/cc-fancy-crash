@@ -12,6 +12,7 @@
     "license": "GPLv3",
     "homepage": "https://github.com/krypciak/cc-fancy-crash",
     "devDependencies": {
+        "@types/jquery": "^3.5.29",
         "@types/node": "^11.6.0",
         "@typescript-eslint/eslint-plugin": "^6.20.0",
         "@typescript-eslint/parser": "^6.20.0",

@@ -11,8 +11,8 @@
 ```bash
 git clone https://github.com/krypciak/cc-fancy-crash
 cd cc-fancy-crash
-npm install
-npm run start
+pnpm install
+pnpm run start
 # this should return no errors (hopefully)
 npx tsc
 ```
