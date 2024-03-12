@@ -29,12 +29,27 @@ jobs:
                     exit 1
                   fi
 
-            - uses: actions/setup-node@v4
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - uses: pnpm/action-setup@v3
+              name: Install pnpm
+              with:
+                  version: 8
+                  run_install: false
 
             - name: Update package.json and ccmod.json
               run: |
                   sed -i "s/\"version\": \".*\"/\"version\": \"${VERSION_NUMERIC}\"/" package.json ccmod.json
                   git add package.json ccmod.json
+
+            - name: Update CHANGELOG.md
+              run: |
+                  sed -i "/\[Unreleased\]/a ## [$VERSION_NUMERIC] newDateHere" ./CHANGELOG.md
+                  sed -i "s/newDateHere/$(date '+%Y-%m-%d')/g" ./CHANGELOG.md
+                  git add ./CHANGELOG.md
 
             - name: Commit changes
               run: |
@@ -43,6 +58,14 @@ jobs:
                   git config --global --add safe.directory /github/workspaces
                   git commit -m "$VERSION"
                   git push origin HEAD:main
+
+            - name: Get Changelog Entry
+              id: changelog_reader
+              uses: mindsers/changelog-reader-action@v2
+              with:
+                  validation_depth: 10
+                  version: ${{ steps.tag_name.outputs.current_version }}
+                  path: ./CHANGELOG.md
 
             - name: Create and push a new tag
               run: |
@@ -60,3 +83,4 @@ jobs:
                       *.ccmod
                   name: ${{ env.VERSION }}
                   tag_name: ${{ env.VERSION }}
+                  body: ${{ steps.changelog_reader.outputs.changes }}
