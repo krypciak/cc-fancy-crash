@@ -9,5 +9,8 @@
     "icons": {
         "24": "icon/icon.png"
     },
+    "dependencies": {
+        "ccmodmanager": ">=0.9.12"
+    },
     "plugin": "plugin.js"
 }

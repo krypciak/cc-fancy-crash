@@ -16,6 +16,7 @@
         "@types/node": "^11.6.0",
         "@typescript-eslint/eslint-plugin": "^6.20.0",
         "@typescript-eslint/parser": "^6.20.0",
+        "ccmodmanager": "github:CCDirectLink/CCModManager",
         "esbuild": "^0.20.0",
         "typescript": "^5.3.3",
         "ultimate-crosscode-typedefs": "github:krypciak/ultimate-crosscode-typedefs"

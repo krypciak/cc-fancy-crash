@@ -1,3 +1,4 @@
+import { GameRestartType, Opts, Themes, registerOpts } from 'options'
 import { Mod } from 'ultimate-crosscode-typedefs/modloader/mod'
 
 type GameCrashInfo = Parameters<typeof GAME_ERROR_CALLBACK>[1]
@@ -64,18 +65,13 @@ interface CrashMsgTheme {
     fgTextField?: string
 }
 
-const themes: Record<string, CrashMsgTheme> = {
+export const themes: Record<keyof typeof Themes, CrashMsgTheme> = {
     Original: {},
     Gray: { bg: '#1d1f21', fg: '#fcfcfc', bgTextField: '#303336', fgTextField: '#fcfcfc' },
 }
 const discordBadge: string = `https://img.shields.io/discord/382339402338402315?logo=discord&logoColor=white&label=CrossCode%20Modding`
 const discordLink: string = `https://discord.com/invite/3Xw69VjXfW`
 
-const optionsHeader: string = 'crashmsg'
-const checkboxReload: string = `${optionsHeader}-reload`
-const checkboxTheme: string = `${optionsHeader}-theme`
-const checkboxExplosion: string = `${optionsHeader}-explosion`
-const checkboxNoCatch: string = `${optionsHeader}-nocatch`
 let isCCL3: boolean
 
 export default class FancyCrashMessage {
@@ -86,61 +82,8 @@ export default class FancyCrashMessage {
         isCCL3 = !!mod.findAllAssets
     }
 
-    async poststart() {
-        ig.lang.labels.sc.gui.options.headers[optionsHeader] = 'Crash Message'
-        ig.lang.labels.sc.gui.options[checkboxReload] = {
-            name: `'Restart Game' button mode`,
-            description: 'True for location.reload(), false for chrome.runtime.reload()',
-        }
-        ig.lang.labels.sc.gui.options[checkboxTheme] = {
-            name: 'Theme',
-            description: 'Crash message theme',
-            group: Object.keys(themes).map(str => str),
-        }
-        ig.lang.labels.sc.gui.options[checkboxExplosion] = {
-            name: 'Explosion',
-            description: 'Explosion',
-        }
-        ig.lang.labels.sc.gui.options[checkboxNoCatch] = {
-            name: `Don't catch errors`,
-            description: 'Disables the Ignore error button, helps with debugging',
-        }
-    }
-
     prestart() {
-        sc.OPTIONS_DEFINITION[checkboxTheme] = {
-            type: 'BUTTON_GROUP',
-            init: Object.keys(themes).indexOf('Original'),
-            data: Object.entries(themes).reduce(
-                (acc, [k, _], i) => {
-                    acc[k] = i
-                    return acc
-                },
-                {} as { [key: string]: number }
-            ),
-            cat: sc.OPTION_CATEGORY.INTERFACE,
-            header: optionsHeader,
-            hasDivider: true,
-        }
-        sc.OPTIONS_DEFINITION[checkboxExplosion] = {
-            type: 'CHECKBOX',
-            init: true,
-            cat: sc.OPTION_CATEGORY.INTERFACE,
-            header: optionsHeader,
-        }
-        sc.OPTIONS_DEFINITION[checkboxReload] = {
-            type: 'CHECKBOX',
-            init: false,
-            cat: sc.OPTION_CATEGORY.INTERFACE,
-            header: optionsHeader,
-        }
-        sc.OPTIONS_DEFINITION[checkboxNoCatch] = {
-            type: 'CHECKBOX',
-            init: false,
-            cat: sc.OPTION_CATEGORY.INTERFACE,
-            header: optionsHeader,
-        }
-
+        registerOpts()
         ig.System.inject({
             // @ts-expect-error the typedefs say that this returns never but modify it so it can return void
             error(error: Error) {
@@ -180,7 +123,7 @@ export default class FancyCrashMessage {
                         }
                     })
                 }
-                if (!GAME_ERROR_CALLBACK || sc.options?.get(checkboxNoCatch)) {
+                if (!GAME_ERROR_CALLBACK || Opts.dontCatchErrors) {
                     throw error
                 }
             },
@@ -198,10 +141,14 @@ export default class FancyCrashMessage {
                 : window.activeMods.map(m => [m.name, m.version?.toString()])
             const modListTxt: string = mods.map(m => `${m[0]}  ${m[1] ?? 'versionNull'}`).reduce((v, acc) => acc + '\n' + v)
 
-            let themeOptionIndex: number | undefined = sc.options?.get(checkboxTheme) as number | undefined
-            const theme: CrashMsgTheme = themeOptionIndex === undefined ? themes['Original'] : Object.values(themes)[themeOptionIndex]
-            const doExplosion: boolean = (sc.options?.get(checkboxExplosion) as boolean) ?? false
-            const reloadCmd: string = sc.options?.get(checkboxReload) ? 'window.location.reload()' : 'chrome.runtime.reload()'
+            const theme: CrashMsgTheme = Object.values(themes)[Opts.theme]
+            const doExplosion: boolean = Opts.explosion
+            const reloadCmd: string =
+                Opts.gameRestartType == GameRestartType.LocationReload
+                    ? 'window.location.reload()'
+                    : Opts.gameRestartType == GameRestartType.ChromeRuntimeReload
+                      ? 'chrome.runtime.reload()'
+                      : ''
 
             const divStyle: string = `${theme.bg ? `background-color: ${theme.bg};` : ''} ${theme.fg ? `foreground-color: ${theme.fg};` : ''}
                 top: 40%; height: 600px; margin-top: -200px; transition: all 1s;`
@@ -255,17 +202,16 @@ export default class FancyCrashMessage {
             )
 
             $(document.body).append(mainDom)
-            doExplosion && $(document.body).append(expDom)
+            if (doExplosion) $(document.body).append(expDom)
             window.setTimeout(() => {
                 mainDom.addClass('shown')
             }, 20)
             const promise = new Promise<{ doCrash: boolean; index?: number }>(res => {
                 window.crashMsg[crashMsgIndex].promiseResolve = res
             })
-            doExplosion &&
-                setTimeout(function () {
-                    expDom.hide()
-                }, 1400)
+            if (doExplosion) {
+                setTimeout(() => expDom.hide(), 1400)
+            }
             return promise
         }
     }
