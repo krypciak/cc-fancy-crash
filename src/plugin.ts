@@ -123,7 +123,7 @@ export default class FancyCrashMessage {
                         }
                     })
                 }
-                if (!GAME_ERROR_CALLBACK || Opts.dontCatchErrors) {
+                if (!GAME_ERROR_CALLBACK) {
                     throw error
                 }
             },

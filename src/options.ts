@@ -46,13 +46,6 @@ export function registerOpts() {
                         name: 'Explosion',
                         description: 'Explosion',
                     },
-                    dontCatchErrors: {
-                        type: 'CHECKBOX',
-                        init: false,
-
-                        name: `Don't catch errors`,
-                        description: 'Disables the Ignore error button, helps with debugging',
-                    },
                 },
             },
         },
