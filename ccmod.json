@@ -1,6 +1,6 @@
 {
     "id": "cc-fancy-crash",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "title": "Fancy crash",
     "description": "Better crash message",
     "repository": "https://github.com/krypciak/cc-fancy-crash",
