@@ -1,6 +1,6 @@
 import type { Options } from 'ccmodmanager/types/mod-options'
 
-export let Opts: ReturnType<typeof sc.modMenu.registerAndGetModOptions<ReturnType<typeof registerOpts>>>
+export let Opts: ReturnType<typeof modmanager.registerAndGetModOptions<ReturnType<typeof registerOpts>>>
 
 export const GameRestartType = {
     LocationReload: 0,
@@ -51,7 +51,7 @@ export function registerOpts() {
         },
     } as const satisfies Options
 
-    Opts = sc.modMenu.registerAndGetModOptions(
+    Opts = modmanager.registerAndGetModOptions(
         {
             modId: 'cc-fancy-crash',
             title: 'cc-fancy-crash',
