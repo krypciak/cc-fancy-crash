@@ -1,5 +1,7 @@
 # cc-fancy-crash
 
+[![CCModManager badge](https://raw.githubusercontent.com/CCDirectLink/CCModManager/refs/heads/master/icon/badge.png)](https://github.com/CCDirectLink/CCModManager)
+
 [![](https://tokei.rs/b1/github/krypciak/cc-fancy-crash?type=typescript&label=TypeScript&style=flat&branch=main)](https://tokei.rs/b1/github/krypciak/cc-fancy-crash?type=typescript&label=TypeScript&style=flat&branch=main)
 [![Discord](https://img.shields.io/discord/382339402338402315?logo=discord&logoColor=white&label=CrossCode%20Modding)](https://discord.com/invite/3Xw69VjXfW)
 
