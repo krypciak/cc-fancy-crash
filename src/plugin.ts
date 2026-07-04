@@ -1,5 +1,5 @@
-import { GameRestartType, Opts, Themes, registerOpts } from 'options'
-import { Mod } from 'ultimate-crosscode-typedefs/modloader/mod'
+import { GameRestartType, Opts, Themes, registerOpts } from './options'
+import type { Mod } from 'ultimate-crosscode-typedefs/modloader/mod'
 
 type GameCrashInfo = Parameters<typeof GAME_ERROR_CALLBACK>[1]
 type InGameCrashInfo = Parameters<typeof GAME_ERROR_CALLBACK>[2]
