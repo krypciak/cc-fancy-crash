@@ -24,7 +24,11 @@ declare global {
         var webAudioActive: boolean
 
         var dom: {
-            create(a: string, b?: { [key: string]: string }, c?: (HTMLElement | JQuery | string | number)[] | JQuery): JQuery
+            create(
+                a: string,
+                b?: { [key: string]: string },
+                c?: (HTMLElement | JQuery | string | number)[] | JQuery
+            ): JQuery
             html(a: string): JQuery
             append(a: any[], b: any[]): void
             prepend(a: any[], b: any[]): void
@@ -108,11 +112,13 @@ export default class FancyCrashMessage {
                 ig.game && ig.game.getErrorData(gameInfo)
 
                 if (GAME_ERROR_CALLBACK) {
-                    ;(GAME_ERROR_CALLBACK as (error: Error, info: GameCrashInfo, gameInfo: InGameCrashInfo) => Promise<{ doCrash: boolean; index?: number }>)(
-                        error,
-                        gci as GameCrashInfo,
-                        gameInfo as InGameCrashInfo
-                    ).then(res => {
+                    ;(
+                        GAME_ERROR_CALLBACK as (
+                            error: Error,
+                            info: GameCrashInfo,
+                            gameInfo: InGameCrashInfo
+                        ) => Promise<{ doCrash: boolean; index?: number }>
+                    )(error, gci as GameCrashInfo, gameInfo as InGameCrashInfo).then(res => {
                         if (res.doCrash) {
                             window.crashMsg[res.index!].dom.hide()
                             console.log('running')
@@ -129,7 +135,11 @@ export default class FancyCrashMessage {
             },
         })
 
-        window.GAME_ERROR_CALLBACK = function (err: Error, info: GameCrashInfo, gameInfo: InGameCrashInfo): Promise<{ doCrash: boolean; index?: number }> {
+        window.GAME_ERROR_CALLBACK = function (
+            err: Error,
+            info: GameCrashInfo,
+            gameInfo: InGameCrashInfo
+        ): Promise<{ doCrash: boolean; index?: number }> {
             const infoText: string =
                 `ccV: ${info.version},   cclV: ${isCCL3 ? '3' : '2'},  OS: ${info.OS},   platform: ${info.platform},   ` +
                 `nwjsV: ${info.nwjsVersion},   browserV: ${info.browserVersion} ${info.map ? `,   map: ${info.map}` : ''}` +
@@ -139,7 +149,9 @@ export default class FancyCrashMessage {
             const mods: [string, string | undefined][] = isCCL3
                 ? Array.from(window.modloader.loadedMods.values()).map(m => [m.id, m.version?.toString()])
                 : window.activeMods.map(m => [m.name, m.version?.toString()])
-            const modListTxt: string = mods.map(m => `${m[0]}  ${m[1] ?? 'versionNull'}`).reduce((v, acc) => acc + '\n' + v)
+            const modListTxt: string = mods
+                .map(m => `${m[0]}  ${m[1] ?? 'versionNull'}`)
+                .reduce((v, acc) => acc + '\n' + v)
 
             const theme: CrashMsgTheme = Object.values(themes)[Opts.theme]
             const doExplosion: boolean = Opts.explosion
@@ -191,10 +203,26 @@ export default class FancyCrashMessage {
                     }),
                 }) - 1
 
-            mainDom.append(ig.dom.html(`<a href="javascript:${reloadCmd}"                                     class="bigButton" >Restart the Game</a>`))
-            mainDom.append(ig.dom.html(`<a href="javascript:window.crashMsg[${crashMsgIndex}].copyFuncs[0]()" class="bigButton" >Copy crash log</a>`))
-            mainDom.append(ig.dom.html(`<a href="javascript:window.crashMsg[${crashMsgIndex}].copyFuncs[1]()" class="bigButton" >Copy mod list</a>`))
-            mainDom.append(ig.dom.html(`<a href="javascript:window.crashMsg[${crashMsgIndex}].copyFuncs[2]()" class="bigButton" >Copy save data</a>`))
+            mainDom.append(
+                ig.dom.html(
+                    `<a href="javascript:${reloadCmd}"                                     class="bigButton" >Restart the Game</a>`
+                )
+            )
+            mainDom.append(
+                ig.dom.html(
+                    `<a href="javascript:window.crashMsg[${crashMsgIndex}].copyFuncs[0]()" class="bigButton" >Copy crash log</a>`
+                )
+            )
+            mainDom.append(
+                ig.dom.html(
+                    `<a href="javascript:window.crashMsg[${crashMsgIndex}].copyFuncs[1]()" class="bigButton" >Copy mod list</a>`
+                )
+            )
+            mainDom.append(
+                ig.dom.html(
+                    `<a href="javascript:window.crashMsg[${crashMsgIndex}].copyFuncs[2]()" class="bigButton" >Copy save data</a>`
+                )
+            )
             mainDom.append(
                 ig.dom.html(
                     `<a href="javascript:window.crashMsg[${crashMsgIndex}].promiseResolve({doCrash: true, index: ${crashMsgIndex}})"   class="bigButton" >Ignore the error</a>`
